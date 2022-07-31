@@ -1,18 +1,19 @@
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { Container } from 'components/Container.styled';
-import { Button } from 'components/Button';
+import { LoadMoreButton } from 'components/LoadMoreButton';
 import { ImageGallery } from 'components/ImageGallery';
 import { Loading } from 'components/Loader';
 import { Modal } from 'components/Modal';
 import { Searchbar } from 'components/Searchbar';
 import { useState, useEffect } from 'react';
-import * as API from './api/Api';
+import * as API from './fetchImages/fetchApi';
 
 export const App = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [images, setImages] = useState([]);
   const [page, setPage] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
-  const [showModal, setShowModal] = useState(false);
   const [activeImg, setActiveImg] = useState('');
   const [error, setError] = useState(false);
 
@@ -20,57 +21,66 @@ export const App = () => {
     if (searchQuery === '') {
       return;
     }
-    try {
-      setIsLoading(true);
-      async function fetchImages() {
-        const data = await API.getImages(searchQuery, page);
-        setImages(prevImages => [...prevImages, ...data.hits]);
-      }
-      setIsLoading(false);
-      fetchImages();
-    } catch (error) {
-      setError(true);
+    if (page !== 1) {
+      fetchImages(searchQuery, page);
     }
   }, [page, searchQuery]);
 
-  const toggleModal = () => {
-    setShowModal(!showModal);
+  const fetchImages = async (searchQuery, page) => {
+    try {
+      setIsLoading(true);
+      const data = await API.getImages(searchQuery, page);
+      setImages(prevImages => [...prevImages, ...data.hits]);
+      setIsLoading(false);
+      if (data.total === 0) {
+        return toast.warning(
+          'Sorry, there are no images matching your search query. Please try again.'
+        );
+      }
+    } catch (error) {
+      setError(true);
+      toast.error('Something went wrong, please try again or reload the page.');
+    }
   };
 
-  const setModalImg = imageUrl => {
-    setActiveImg(imageUrl);
-  };
-
-  const handleSubmit = searchQuery => {
+  const handleSubmit = async searchQuery => {
     setSearchQuery(searchQuery);
     setImages([]);
     setPage(1);
+    fetchImages(searchQuery, 1);
   };
 
   const loadMore = () => {
-    setPage(prevPage => prevPage + 1);
+    setPage(page + 1);
+  };
+
+  const setActiveImgFunc = imageUrl => {
+    setActiveImg(imageUrl);
   };
 
   return (
     <Container>
       <Searchbar onSubmit={handleSubmit} />
-      {isLoading && <Loading />}
       {searchQuery && (
-        <ImageGallery
-          items={images}
-          onClick={toggleModal}
-          setImageModal={setModalImg}
-        />
+        <ImageGallery items={images} setImageModal={setActiveImgFunc} />
       )}
+      {isLoading && <Loading />}
       {error && (
         <p>Something went wrong, please try again or reload the page.</p>
       )}
-      {images.length > 0 && <Button onClick={loadMore} />}
-      {showModal && (
-        <Modal onClose={toggleModal}>
+      {images.length >= 12 && (
+        <LoadMoreButton onClick={loadMore}>Load more</LoadMoreButton>
+      )}
+      {activeImg && (
+        <Modal
+          onClose={() => {
+            setActiveImg(null);
+          }}
+        >
           <img src={activeImg} alt="" />
         </Modal>
       )}
+      <ToastContainer autoClose={3000} theme={'colored'} />
     </Container>
   );
 };

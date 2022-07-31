@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { ImageGalleryList } from './ImageGallery.styled';
 import { ImageGalleryItem } from './ImageGalleryItem';
 
-export const ImageGallery = ({ items, setImageModal, onClick }) => (
+export const ImageGallery = ({ items, setImageModal }) => (
   <ImageGalleryList>
     {items.map(item => (
       <ImageGalleryItem
@@ -11,7 +11,6 @@ export const ImageGallery = ({ items, setImageModal, onClick }) => (
         src={item}
         onClick={() => {
           setImageModal(item.largeImageURL);
-          onClick();
         }}
       />
     ))}
@@ -21,5 +20,4 @@ export const ImageGallery = ({ items, setImageModal, onClick }) => (
 ImageGallery.propTypes = {
   items: PropTypes.array.isRequired,
   setImageModal: PropTypes.func.isRequired,
-  onClick: PropTypes.func.isRequired,
 };

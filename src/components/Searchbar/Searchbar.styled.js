@@ -1,4 +1,6 @@
 import styled from 'styled-components';
+import { Form, Field } from 'formik';
+import { ImSearch } from 'react-icons/im';
 
 export const HeaderSearchbar = styled.header`
   top: 0;
@@ -31,4 +33,34 @@ export const SearchFormButton = styled.button`
   &:hover {
     opacity: 1;
   }
+`;
+
+export const SearchForm = styled(Form)`
+  display: flex;
+  align-items: center;
+  width: 100%;
+  max-width: 600px;
+  background-color: #fff;
+  border-radius: 3px;
+  overflow: hidden;
+`;
+
+export const Input = styled(Field)`
+  display: inline-block;
+  width: 100%;
+  font: inherit;
+  font-size: 20px;
+  border: none;
+  outline: none;
+  padding-left: 4px;
+  padding-right: 4px;
+  &::placeholder {
+    font: inherit;
+    font-size: 18px;
+  }
+`;
+
+export const SearchSvg = styled(ImSearch)`
+  width: 20px;
+  height: 20px;
 `;
