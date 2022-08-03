@@ -9,10 +9,6 @@ import {
   SearchSvg,
 } from './Searchbar.styled';
 
-const initialValues = {
-  searchQuery: '',
-};
-
 export const Searchbar = ({ onSubmit }) => {
   const handleSubmit = ({ searchQuery }, { resetForm }) => {
     if (searchQuery.trim() === '') {
@@ -23,10 +19,10 @@ export const Searchbar = ({ onSubmit }) => {
   };
 
   return (
-    <HeaderSearchbar className="searchbar">
-      <Formik initialValues={initialValues} onSubmit={handleSubmit}>
-        <SearchForm className="form">
-          <SearchFormButton type="submit" className="button">
+    <HeaderSearchbar>
+      <Formik initialValues={{ searchQuery: '' }} onSubmit={handleSubmit}>
+        <SearchForm>
+          <SearchFormButton type="submit">
             <SearchSvg />
           </SearchFormButton>
 

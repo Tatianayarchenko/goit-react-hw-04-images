@@ -1,11 +1,12 @@
 import axios from 'axios';
+import { API_KEY, BASE_URL } from 'constants/constants';
 
-const API_KEY = '27599819-5f2242c0de29668fb10ee249b';
-
-axios.defaults.baseURL = 'https://pixabay.com/api';
+const instance = axios.create({
+  baseURL: BASE_URL,
+});
 
 export const getImages = async (searchQuery, page) => {
-  const response = await axios.get('/', {
+  const response = await instance.get('/', {
     params: {
       key: API_KEY,
       image_type: 'photo',
